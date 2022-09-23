@@ -5,14 +5,9 @@ let dataStore;
 let dataIndex;
 //creates variable to store arguments
 let argument = process.argv;
-//adds some imports to be used
 //imports fs
-import * as fs from 'fs';
-//imports create
-import { create } from 'domain';
-//imports exit
-import {exit} from 'node:process';
-import { arrayBuffer } from 'stream/consumers';
+var fs = require('fs');
+
 
 //Object that holds methods to be used based on subcommand
 let commands = {
@@ -21,13 +16,13 @@ let commands = {
                 dataStore = JSON.parse(data)
                 if (error) {
                     console.error('Read Failed')
-                    exit(1)
+                    process.exit(1);
                 } else {
                     if (!argument[3]){
                         console.log(dataStore)
                     } else if (dataStore[argument[3]] === undefined){
                         console.error('Usage: node pets.js read INDEX')
-                        exit(1);
+                        process.exit(1);
                     } else {
                         console.log(dataStore[argument[3]])
                     }
@@ -38,7 +33,7 @@ let commands = {
             fs.readFile('./pets.json','utf-8',(error,data)=>{
                 if(error){
                     console.error('no file found')
-                    exit(1);
+                    process.exit(1);
                 } else {
                     var obj ={
                         'age' : parseInt(argument[3]),
@@ -50,7 +45,7 @@ let commands = {
                     fs.writeFile('pets.json',JSON.stringify(pets),(error)=>{
                         if(error){
                             console.error(new Error(error));
-                            exit(1);
+                            process.exit(1);
                         } else {
                             console.log(pets[pets.length-1]);
                         }
@@ -63,6 +58,7 @@ let commands = {
                 dataStore = JSON.parse(data)
                 if (error){
                     console.error(new Error(error))
+                    process.exit(1);
                 } else if(!dataStore[argument[3]]){
                     console.error('Usage: node pets.js update INDEX AGE KIND NAME')
                 } else {
@@ -72,8 +68,8 @@ let commands = {
                     dataIndex.name = argument[6]    
                     fs.writeFile('./pets.json',JSON.stringify(dataStore),(error)=>{
                         if(error){
-                            console.error(new Error(error));
-                            exit(1);
+                            console.error(new Error(error))
+                            process.exit(1);
                         } else {
                             console.log(dataStore);
                         }
@@ -93,7 +89,7 @@ let commands = {
                     fs.writeFile('./pets.json',JSON.stringify(dataStore),(error)=>{
                         if(error){
                             console.error(new Error(error));
-                            exit(1);
+                            process.exit(1);
                         } else {
                             console.log(dataStore);
                         }
@@ -109,7 +105,7 @@ let commands = {
 //Checks to see if the subcommand is filled in and is a real command
 if (argument[2] === undefined || !commandArray.includes(argument[2], 0)){
     console.error('Failed Task, Usage: node pets.js [read | create | update | destroy]')
-    exit(1)
+    process.exit(1);
 }
 //Checks to see what subcommand is ran then runs the instructions based on the subcommand
 if (argument[2] == 'read'){
@@ -117,7 +113,7 @@ if (argument[2] == 'read'){
 }else if(argument[2] == 'create'){
     if(argument.length<6){
         console.error('Usage: node pets.js create AGE KIND NAME');
-        exit(1);
+        process.exit(1);
     }else{
         commands.create()
     }
